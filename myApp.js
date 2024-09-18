@@ -1,38 +1,85 @@
 require('dotenv').config();
 
+/** install and set up mongoose */
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-let Person;
+/* define a schema and compile it into a model */
+const personSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  age: Number,
+  favoriteFoods: [String]
+});
+
+let Person = mongoose.model('Person', personSchema);
 
 const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+  let wernerHerzog = new Person({
+    name: "Werner Herzog",
+    age: 76,
+    favoriteFoods: ["Sauerkraut", "Wurst"]});
+
+  wernerHerzog.save((err, data) => {
+    if (err) return console.error(err);
+    done(null, data);
+  })
 };
 
+const arrayOfPeople = [
+  {name: "Janka",
+    age: 33,
+    favoriteFoods: ["Club Mate", "pizza"]
+  },
+  {
+    name: "Balazs",
+    age: 43,
+    favoriteFoods: ["turosteszta", "hummus"]
+  }
+];
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
-};
+  Person.create(arrayOfPeople, function (err, people) {
+    if (err) return console.log(err);
+    done(null, people);
+  });
+  };
 
 const findPeopleByName = (personName, done) => {
-  done(null /*, data*/);
+  Person.find({name: personName}, (err, data) => {
+    done(null , data);
+  });
 };
 
 const findOneByFood = (food, done) => {
-  done(null /*, data*/);
+  Person.findOne({favoriteFoods: food}, (err, data) => {
+    done(null, data);
+  })
 };
 
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findById(personId, (err, data) => {
+    done(null, data);
+  })
 };
 
 const findEditThenSave = (personId, done) => {
   const foodToAdd = "hamburger";
-
-  done(null /*, data*/);
+  Person.findById(personId, (err, data) => {
+    data.favoriteFoods.push(foodToAdd);
+    data.save((err, newData) => {
+      done(err, newData);
+    })
+  })
 };
 
 const findAndUpdate = (personName, done) => {
   const ageToSet = 20;
+  Person.findOneAndUpdate({name: personName}, {age: 20}, {new: true}, (err, data) => {
 
-  done(null /*, data*/);
+    done(err, data);
+  })
 };
 
 const removeById = (personId, done) => {
