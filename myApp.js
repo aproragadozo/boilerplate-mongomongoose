@@ -2,8 +2,10 @@ require('dotenv').config();
 
 /** install and set up mongoose */
 const mongoose = require("mongoose");
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
+// railway app variable
+mongoose.connect(${{MONGO_URL}}, { useNewUrlParser: true, useUnifiedTopology: true })
 /* define a schema and compile it into a model */
 const personSchema = new mongoose.Schema({
   name: {
